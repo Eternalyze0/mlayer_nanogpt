@@ -8,3 +8,5 @@ step 2000: train loss 1.6256, val loss 1.7869
 vs baseline:
 
 step 2000: train loss 1.7648, val loss 1.8857
+
+these numbers are for char-level but a similar 0.1 difference exists for token-level
