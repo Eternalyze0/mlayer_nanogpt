@@ -15,8 +15,6 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-# import torch
-# import torch.nn as nn
 import torch.nn.init as init
 
 class MLayer(nn.Module):
@@ -134,26 +132,25 @@ class MLP(nn.Module):
         # self.gelu    = nn.GELU()
         # self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
         # self.dropout = nn.Dropout(config.dropout)
-        self.mlayer = MLayer(dim_m=16, dim_rep=128, with_bias=True, matrix_squarings_exp=10)
-        self.fc = nn.Linear(256, 128)
+        self.dim_m = 16
+        self.mlayer = MLayer(dim_m=self.dim_m, dim_rep=config.n_embd, with_bias=True, matrix_squarings_exp=10)
+        self.fc = nn.Linear(self.dim_m**2, config.n_embd)
+        # print(config.n_embd)
 
     def forward(self, x):
         # x = self.c_fc(x)
         # x = self.gelu(x)
         # x = self.c_proj(x)
         # x = self.dropout(x)
-        # print(x.shape)
         x = self.mlayer(x)
         x = x.flatten(start_dim=2)
         x = self.fc(x)
-        # print(x.shape)
         return x
 
 class Block(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        print(config)
         self.ln_1 = LayerNorm(config.n_embd, bias=config.bias)
         self.attn = CausalSelfAttention(config)
         self.ln_2 = LayerNorm(config.n_embd, bias=config.bias)
