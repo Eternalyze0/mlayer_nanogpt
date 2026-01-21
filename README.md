@@ -19,6 +19,6 @@ python3.10 train.py config/train_shakespeare_char.py --device=cpu --compile=Fals
 python3.10 sample.py --out_dir=out-shakespeare-char --device=cpu
 ```
 
-## Intuition: M-Layer Generalizes Better
+## M-Layer Generalizes Better
 
 <img width="488" height="760" alt="Screenshot 2569-01-21 at 14 27 35" src="https://github.com/user-attachments/assets/4b444769-d132-4671-b8a9-d7910e03c7b1" />
