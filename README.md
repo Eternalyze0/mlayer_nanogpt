@@ -1,4 +1,4 @@
-# mlayer_nanogpt
+# M-Layer nanoGPT
 nanoGPT but with MLPs replaced by M-layers: https://arxiv.org/pdf/2008.03936.
 ```
 mlayer:
