@@ -154,7 +154,7 @@ class MLP(nn.Module):
         self.fc = nn.Linear(self.dim_m, config.n_embd // self.dim_m)
 
     def forward(self, x):
-        # print(x.shape)
+        
         # x shape: (batch, seq_len, n_embd)
         batch_size, seq_len, _ = x.shape
         
@@ -166,7 +166,7 @@ class MLP(nn.Module):
         
         # Reshape back to sequence
         x = x_transformed.reshape(batch_size, seq_len, -1)
-        # print(x.shape)
+        
         return x
 
 class Block(nn.Module):
@@ -406,3 +406,20 @@ class GPT(nn.Module):
             idx = torch.cat((idx, idx_next), dim=1)
 
         return idx
+
+if __name__ == '__main__':
+    # Create a test where each token has unique values
+    batch_size, seq_len, n_embd = 2, 3, 4
+    x = torch.arange(batch_size * seq_len * n_embd).float().reshape(batch_size, seq_len, n_embd)
+
+    # Process through the MLP
+    mlp = MLP(GPTConfig(n_embd=4))
+    output = mlp(x)
+
+    # Check if output at position 0 changes when you modify only position 1's input
+    x_modified = x.clone()
+    x_modified[0, 1, :] += 1000  # Only modify token 1
+    output_modified = mlp(x_modified)
+
+    # These should be equal (no information leakage)
+    print(torch.allclose(output[0, 0, :], output_modified[0, 0, :]))  # Should be True
