@@ -128,23 +128,45 @@ class MLP(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        # self.c_fc    = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
-        # self.gelu    = nn.GELU()
-        # self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
-        # self.dropout = nn.Dropout(config.dropout)
-        self.dim_m = 16
-        self.mlayer = MLayer(dim_m=self.dim_m, dim_rep=config.n_embd, with_bias=True, matrix_squarings_exp=10)
-        self.fc = nn.Linear(self.dim_m**2, config.n_embd)
-        # print(config.n_embd)
+        self.c_fc    = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
+        self.gelu    = nn.GELU()
+        self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
+        self.dropout = nn.Dropout(config.dropout)
 
     def forward(self, x):
-        # x = self.c_fc(x)
-        # x = self.gelu(x)
-        # x = self.c_proj(x)
-        # x = self.dropout(x)
-        x = self.mlayer(x)
-        x = x.flatten(start_dim=2)
-        x = self.fc(x)
+        x = self.c_fc(x)
+        x = self.gelu(x)
+        x = self.c_proj(x)
+        x = self.dropout(x)
+        return x
+
+class MLP(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+        self.c_fc    = nn.Linear(config.n_embd, 4 * config.n_embd, bias=config.bias)
+        self.gelu    = nn.GELU()
+        self.c_proj  = nn.Linear(4 * config.n_embd, config.n_embd, bias=config.bias)
+        self.dropout = nn.Dropout(config.dropout)
+        self.config = config
+        self.dim_m = config.n_embd // 4
+        self.mlayer = MLayer(dim_m=self.dim_m, dim_rep=config.n_embd, with_bias=True, matrix_squarings_exp=3)
+        self.fc = nn.Linear(self.dim_m, config.n_embd // self.dim_m)
+
+    def forward(self, x):
+        # print(x.shape)
+        # x shape: (batch, seq_len, n_embd)
+        batch_size, seq_len, _ = x.shape
+        
+        # Process each position independently
+        x_reshaped = x.reshape(-1, self.config.n_embd) # torch.Size([768, 128])
+        x_transformed = self.mlayer(x_reshaped)
+        x_transformed = x_transformed.flatten(start_dim=2)
+        x_transformed = self.fc(x_transformed)
+        
+        # Reshape back to sequence
+        x = x_transformed.reshape(batch_size, seq_len, -1)
+        # print(x.shape)
         return x
 
 class Block(nn.Module):
