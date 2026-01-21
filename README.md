@@ -1,5 +1,8 @@
 # M-Layer nanoGPT
 nanoGPT but with MLPs replaced by M-layers: https://arxiv.org/pdf/2008.03936. M-layers map the input vector to a matrix (by multiplying by a tensor) and then matrix-exponentiate the matrix 2k times (in our case 8 times since k=3). Then the resulting matrix is mapped back to a vector. Matrix exponentiation is the only non-linearity m-layer features and results in better generalization (see below).
+
+<img width="640" height="480" alt="plot" src="https://github.com/user-attachments/assets/1cb29dfa-8df6-46ec-a32b-84b615a98b15" />
+
 ```
 mlayer:
 step 2000: train loss 1.5898, val loss 1.7110
