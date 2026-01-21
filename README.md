@@ -4,7 +4,7 @@ nanoGPT but with MLPs replaced by M-layers: https://arxiv.org/pdf/2008.03936. M-
 mlayer:
 step 2000: train loss 1.5898, val loss 1.7110
 vs baseline:
-step 2000: train loss 1.7648, val loss 1.8857
+step 2000: train loss 1.7805, val loss 1.8888
 ```
 these numbers are for char-level but a similar 0.1-0.2 difference exists for token-level
 
